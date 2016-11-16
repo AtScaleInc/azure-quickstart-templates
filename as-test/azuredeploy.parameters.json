@@ -1,0 +1,55 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "clusterName": {
+            "value": "myCluster"
+        },
+        "clusterVersion": {
+            "value": "3.4"
+        },
+        "headNodeSize": {
+            "value": "Standard_D3"
+        },
+        "workerNodeSize": {
+            "value": "Standard_D3"
+        },
+        "workerNodeCount": {
+            "value": 4
+        },
+        "edgeNodeSize": {
+            "value": "Standard_D3"
+        },
+        "clusterLoginUserName": {
+            "value": "admin"
+        },
+      "clusterLoginPassword": {
+        "value": "GEN-PASSWORD"
+      },
+        "sshUserName": {
+            "value": "sshuser"
+        },
+      "sshPassword": {
+        "value": "GEN-PASSWORD"
+      },
+        "existingClusterStorageResourceGroup": {
+            "value": "mystorageresourcegroup"
+        },
+        "existingClusterStorageAccountName": {
+            "value": "mystorageaccount"
+        },
+        "newOrExistingClusterStorageContainerName": {
+            "value": "containerName"
+        },
+        "existingVirtualNetworkResourceGroup": {
+            "value": "virtualnetworkresourcegroup"
+        },
+        "existingVirtualNetworkName": {
+            "value": "virtualnetworkname"
+        },
+        "existingVirtualNetworkSubnetName": {
+            "value": "subnetname"
+        }
+    }
+}
+
