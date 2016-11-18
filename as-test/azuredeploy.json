@@ -108,6 +108,7 @@
     "variables": {
         "defaultApiVersion": "2015-06-15",
         "clusterApiVersion": "2015-03-01-preview"
+        "applicationName": "atscale-edgenode"
     },
   "resources": [
     {
@@ -192,22 +193,32 @@
                 "subnet": "[concat(resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName')), '/subnets/', parameters('existingVirtualNetworkSubnetName'))]"
               },
             },
-            {
+    {
+        "name": "[concat(parameters('clusterName'),'/', variables('applicationName'))]",
+        "type": "Microsoft.HDInsight/clusters/applications",
+        "apiVersion": "[variables('clusterApiVersion')]",
+        "dependsOn": [
+    "[concat('Microsoft.HDInsight/clusters/', parameters('clusterName'))]"
+  ],
+        "properties": {
+            "marketPlaceIdentifier": "AtScale",
+            "computeProfile": {
+                "roles": [{
                     "name": "edgenode",
                     "targetInstanceCount": 1,
                     "hardwareProfile": {
                         "vmSize": "[parameters('edgeNodeSize')]"
-                    },
-              "osProfile": {
-                "linuxOperatingSystemProfile": {
-                  "username": "[parameters('sshUserName')]",
-                  "password": "[parameters('sshPassword')]"
-                }
-              },
-              "virtualNetworkProfile": {
-                "id": "[resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName'))]",
-                "subnet": "[concat(resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName')), '/subnets/', parameters('existingVirtualNetworkSubnetName'))]"
-              }
+                    }
+                }]
+            },
+            "installScriptActions": [{
+                "name": "[concat('emptynode','-' ,uniquestring(variables('applicationName')))]",
+                "uri": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-hdinsight-linux-with-edge-node/",
+                "roles": ["edgenode"]
+            }],
+            "uninstallScriptActions": [],
+            "httpsEndpoints": [],
+          }
           } 
           ]
         }
