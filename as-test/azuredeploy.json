@@ -1,123 +1,114 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "clusterName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the cluster to create."
-            }
-        },
-        "clusterVersion": {
-            "type": "string",
-            "defaultValue": "3.4",
-            "metadata": {
-                "description": "The HDInsight version to deploy."
-            }
-        },
-        "headNodeSize": {
-            "type": "string",
-            "defaultValue": "Standard_D3",
-            "metadata": {
-                "description": "The VM size of the head nodes."
-            }
-        },
-        "workerNodeSize": {
-            "type": "string",
-            "defaultValue": "Standard_D3",
-            "metadata": {
-                "description": "The VM size of the worker nodes."
-            }
-        },
-        "workerNodeCount": {
-            "type": "int",
-            "defaultValue": 4,
-            "metadata": {
-                "description": "The number of worker nodes in the cluster."
-            }
-        },
-        "edgeNodeSize": {
-            "type": "string",
-            "defaultValue": "Standard_D3",
-            "metadata": {
-                "description": "The VM size of the edge nodes."
-            }
-        },
-        "clusterLoginUserName": {
-            "type": "string",
-            "defaultValue": "admin",
-            "metadata": {
-                "description": "These credentials can be used to submit jobs to the cluster and to log into cluster dashboards."
-            }
-        },
-        "clusterLoginPassword": {
-            "type": "securestring",
-            "metadata": {
-                "description": "The password must be at least 10 characters in length and must contain at least one digit, one non-alphanumeric character, and one upper or lower case letter."
-            }
-        },
-        "sshUserName": {
-            "type": "string",
-            "metadata": {
-                "description": "These credentials can be used to remotely access the cluster."
-            }
-        },
-        "sshPassword": {
-            "type": "securestring",
-            "metadata": {
-                "description": "The password must be at least 10 characters in length and must contain at least one digit, one non-alphanumeric character, and one upper or lower case letter."
-            }
-        },
-        "existingClusterStorageResourceGroup": {
-            "type": "string",
-            "metadata": {
-                "description": "The resource group name of the storage account to use as the cluster's default storage."
-            }
-        },
-        "existingClusterStorageAccountName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the storage account to use as the cluster's default storage."
-            }
-        },
-        "newOrExistingClusterStorageContainerName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the storage container to use."
-            }
-        },
-        "existingVirtualNetworkResourceGroup": {
-            "type": "string",
-            "metadata": {
-                "description": "The existing virtual network resource group name."
-            }
-        },
-        "existingVirtualNetworkName": {
-            "type": "string",
-            "metadata": {
-                "description": "The existing virtual network name."
-            }
-        },
-        "existingVirtualNetworkSubnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "The existing virtual network subnet name."
-            }
-        }
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "clusterName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the HDInsight cluster to be created. The cluster name must be globally unique."
+      }
     },
-    "variables": {
-        "defaultApiVersion": "2015-06-15",
-        "clusterApiVersion": "2015-03-01-preview",
-        "applicationName": "atscale-edgenode"
+    "clusterLoginUserName": {
+      "type": "string",
+      "defaultValue": "admin",
+      "metadata": {
+        "description": "These credentials can be used to submit jobs to the cluster and to log into cluster dashboards."
+      }
     },
+    "clusterLoginPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The password must be at least 10 characters in length and must contain at least one digit, one non-alphanumeric character, and one upper or lower case letter."
+      }
+    },
+    "sshUserName": {
+      "type": "string",
+      "defaultValue": "sshuser",
+      "metadata": {
+        "description": "These credentials can be used to remotely access the cluster."
+      }
+    },
+    "sshPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The password must be at least 10 characters in length and must contain at least one digit, one non-alphanumeric character, and one upper or lower case letter."
+      }
+    },
+    "_artifactsLocation": {
+          "type": "string",
+          "metadata": {
+              "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
+          },
+          "defaultValue": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-hdinsight-linux-with-edge-node/"
+      },
+    "_artifactsLocationSasToken": {
+          "type": "securestring",
+          "metadata": {
+              "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
+          },
+          "defaultValue": ""
+      },
+    "installScriptActionFolder":{
+      "type": "string",
+      "metadata": {
+        "description": "A script action you can run on the empty node to install or configure additiona software."
+      },
+      "defaultValue": "scripts"
+    },
+    "installScriptAction":{
+      "type": "string",
+      "metadata": {
+        "description": "A script action you can run on the empty node to install or configure additiona software."
+      },
+      "defaultValue": "EmptyNodeSetup.sh"
+    },
+    "existingVirtualNetworkResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "The existing virtual network resource group name."
+      }
+    },
+    "existingVirtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "The existing virtual network name."
+      }
+    },
+    "existingVirtualNetworkSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "The existing virtual network subnet name."
+      }
+    }
+  },
+  "variables": {
+    "clusterStorageAccountName": "[concat(parameters('clusterName'),'store')]",
+    "storageAccountType": "Standard_LRS",
+    "applicationName": "new-edgenode"
+  },
   "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('clusterStorageAccountName')]",
+      "apiVersion": "2016-01-01",
+      "location": "[resourceGroup().location]",
+      "sku": {
+          "name": "[variables('storageAccountType')]"
+      },
+      "kind": "Storage", 
+      "properties": {}
+    },
     {
       "name": "[parameters('clusterName')]",
       "type": "Microsoft.HDInsight/clusters",
       "location": "[resourceGroup().location]",
-      "apiVersion": "[variables('clusterApiVersion')]",
+      "apiVersion": "2015-03-01-preview",
+      "dependsOn": [ "[concat('Microsoft.Storage/storageAccounts/',variables('clusterStorageAccountName'))]" ],
+      "tags": {
+
+      },
       "properties": {
-        "clusterVersion": "[parameters('clusterVersion')]",
+        "clusterVersion": "3.4",
         "osType": "Linux",
         "clusterDefinition": {
           "kind": "hadoop",
@@ -132,10 +123,10 @@
         "storageProfile": {
           "storageaccounts": [
             {
-              "name": "[replace(replace(concat(reference(resourceId(parameters('existingClusterStorageResourceGroup'), 'Microsoft.Storage/storageAccounts/', parameters('existingClusterStorageAccountName')), variables('defaultApiVersion')).primaryEndpoints.blob),'https:',''),'/','')]",
+              "name": "[replace(replace(reference(resourceId('Microsoft.Storage/storageAccounts', variables('clusterStorageAccountName')), '2016-01-01').primaryEndpoints.blob,'https://',''),'/','')]",
               "isDefault": true,
-              "container": "[parameters('newOrExistingClusterStorageContainerName')]",
-              "key": "[listKeys(resourceId(parameters('existingClusterStorageResourceGroup'), 'Microsoft.Storage/storageAccounts', parameters('existingClusterStorageAccountName')), variables('defaultApiVersion')).key1]"
+              "container": "[parameters('clusterName')]",
+              "key": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('clusterStorageAccountName')), '2016-01-01').keys[0].value]"
             }
           ]
         },
@@ -145,7 +136,7 @@
               "name": "headnode",
               "targetInstanceCount": "2",
               "hardwareProfile": {
-                "vmSize": "[parameters('headNodeSize')]"
+                "vmSize": "Standard_D3"
               },
               "osProfile": {
                 "linuxOperatingSystemProfile": {
@@ -153,16 +144,16 @@
                   "password": "[parameters('sshPassword')]"
                 }
               },
-              "virtualNetworkProfile": {
+             "virtualNetworkProfile": {
                 "id": "[resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName'))]",
                 "subnet": "[concat(resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName')), '/subnets/', parameters('existingVirtualNetworkSubnetName'))]"
               }
             },
             {
               "name": "workernode",
-              "targetInstanceCount": "[parameters('workerNodeCount')]",
+              "targetInstanceCount": 2,
               "hardwareProfile": {
-                "vmSize": "[parameters('workerNodeSize')]"
+                "vmSize": "Standard_D3"
               },
               "osProfile": {
                 "linuxOperatingSystemProfile": {
@@ -170,65 +161,56 @@
                   "password": "[parameters('sshPassword')]"
                 }
               },
-              "virtualNetworkProfile": {
+             "virtualNetworkProfile": {
                 "id": "[resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName'))]",
                 "subnet": "[concat(resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName')), '/subnets/', parameters('existingVirtualNetworkSubnetName'))]"
               }
-            },
-            {
-              "name": "zookeepernode",
-              "minInstanceCount": 1,
-              "targetInstanceCount": 3,
-              "hardwareProfile": {
-                "vmSize": "[parameters('edgeNodeSize')]"
-              },
-              "osProfile": {
-                "linuxOperatingSystemProfile": {
-                  "username": "[parameters('sshUserName')]",
-                  "password": "[parameters('sshPassword')]"
-                }
-              },
-              "virtualNetworkProfile": {
-                "id": "[resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName'))]",
-                "subnet": "[concat(resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName')), '/subnets/', parameters('existingVirtualNetworkSubnetName'))]"
-              }
-            },
+            }
+          ]
+        }
+      }
+    },
+
+
     {
         "name": "[concat(parameters('clusterName'),'/', variables('applicationName'))]",
         "type": "Microsoft.HDInsight/clusters/applications",
-        "apiVersion": "[variables('clusterApiVersion')]",
-        "dependsOn": [
-    "[concat('Microsoft.HDInsight/clusters/', parameters('clusterName'))]"
-  ],
+        "apiVersion": "2015-03-01-preview",
+        "dependsOn": [ "[concat('Microsoft.HDInsight/clusters/',parameters('clusterName'))]" ],
         "properties": {
-            "marketPlaceIdentifier": "AtScale",
+            "marketPlaceIdentifier": "EmptyNode",
             "computeProfile": {
                 "roles": [{
                     "name": "edgenode",
                     "targetInstanceCount": 1,
                     "hardwareProfile": {
-                        "vmSize": "[parameters('edgeNodeSize')]"
+                        "vmSize": "Standard_D3"
                     }
                 }]
             },
             "installScriptActions": [{
                 "name": "[concat('emptynode','-' ,uniquestring(variables('applicationName')))]",
-                "uri": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-hdinsight-linux-with-edge-node/",
+                "uri": "[concat(parameters('_artifactsLocation'), '/', parameters('installScriptActionFolder'), '/', parameters('installScriptAction'), parameters('_artifactsLocationSasToken'))]",
                 "roles": ["edgenode"]
             }],
             "uninstallScriptActions": [],
-            "httpsEndpoints": []
-          }
-          } 
-          ]
+            "httpsEndpoints": [],
+            "applicationType": "CustomApplication"
         }
-      }
     }
   ],
-    "outputs": {
-        "cluster": {
-            "type": "object",
-            "value": "[reference(resourceId('Microsoft.HDInsight/clusters',parameters('clusterName')))]"
-        }
+  "outputs": {
+    "storage": {
+      "type": "object",
+      "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('clusterStorageAccountName')))]"
+    },
+    "cluster": {
+      "type": "object",
+      "value": "[reference(resourceId('Microsoft.HDInsight/clusters',parameters('clusterName')))]"
+    },
+    "application": {
+      "type": "object",
+      "value": "[reference(resourceId('Microsoft.HDInsight/clusters/applications/',parameters('clusterName'), variables('applicationName')))]"
     }
+  }
 }
