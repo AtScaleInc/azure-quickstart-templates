@@ -8,6 +8,34 @@
         "description": "The name of the HDInsight cluster to be created. The cluster name must be globally unique."
       }
     },
+    "headNodeSize": {
+      "type": "string",
+      "defaultValue": "Standard_D3",
+      "metadata": {
+        "description": "The VM size of the head nodes."
+      }
+    },
+    "workerNodeSize": {
+      "type": "string",
+      "defaultValue": "Standard_D3",
+      "metadata": {
+        "description": "The VM size of the worker nodes."
+      }
+    },
+    "workerNodeCount": {
+      "type": "int",
+      "defaultValue": 4,
+      "metadata": {
+        "description": "The number of worker nodes in the cluster."
+      }
+    },
+    "edgeNodeSize": {
+      "type": "string",
+      "defaultValue": "Standard_D3",
+      "metadata": {
+        "description": "The VM size of the edge nodes."
+      }
+    },
     "clusterLoginUserName": {
       "type": "string",
       "defaultValue": "admin",
@@ -23,7 +51,7 @@
     },
     "sshUserName": {
       "type": "string",
-      "defaultValue": "sshuser",
+      "defaultValue": "atscale",
       "metadata": {
         "description": "These credentials can be used to remotely access the cluster."
       }
@@ -33,34 +61,6 @@
       "metadata": {
         "description": "The password must be at least 10 characters in length and must contain at least one digit, one non-alphanumeric character, and one upper or lower case letter."
       }
-    },
-    "_artifactsLocation": {
-          "type": "string",
-          "metadata": {
-              "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
-          },
-          "defaultValue": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-hdinsight-linux-with-edge-node/"
-      },
-    "_artifactsLocationSasToken": {
-          "type": "securestring",
-          "metadata": {
-              "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
-          },
-          "defaultValue": ""
-      },
-    "installScriptActionFolder":{
-      "type": "string",
-      "metadata": {
-        "description": "A script action you can run on the empty node to install or configure additiona software."
-      },
-      "defaultValue": "scripts"
-    },
-    "installScriptAction":{
-      "type": "string",
-      "metadata": {
-        "description": "A script action you can run on the empty node to install or configure additiona software."
-      },
-      "defaultValue": "EmptyNodeSetup.sh"
     },
     "existingVirtualNetworkResourceGroup": {
       "type": "string",
@@ -84,7 +84,7 @@
   "variables": {
     "clusterStorageAccountName": "[concat(parameters('clusterName'),'store')]",
     "storageAccountType": "Standard_LRS",
-    "applicationName": "new-edgenode"
+    "applicationName": "AtScale-edgenode"
   },
   "resources": [
     {
@@ -136,7 +136,7 @@
               "name": "headnode",
               "targetInstanceCount": "2",
               "hardwareProfile": {
-                "vmSize": "Standard_D3"
+                "vmSize": "[parameters('headNodeSize')]"
               },
               "osProfile": {
                 "linuxOperatingSystemProfile": {
@@ -151,9 +151,9 @@
             },
             {
               "name": "workernode",
-              "targetInstanceCount": 2,
+              "targetInstanceCount": "[parameters('workerNodeCount')]",
               "hardwareProfile": {
-                "vmSize": "Standard_D3"
+                "vmSize": "[parameters('workerNodeSize')]"
               },
               "osProfile": {
                 "linuxOperatingSystemProfile": {
@@ -178,19 +178,19 @@
         "apiVersion": "2015-03-01-preview",
         "dependsOn": [ "[concat('Microsoft.HDInsight/clusters/',parameters('clusterName'))]" ],
         "properties": {
-            "marketPlaceIdentifier": "EmptyNode",
+            "marketPlaceIdentifier": "AtScale",
             "computeProfile": {
                 "roles": [{
                     "name": "edgenode",
                     "targetInstanceCount": 1,
                     "hardwareProfile": {
-                        "vmSize": "Standard_D3"
+                        "vmSize": "[parameters('edgeNodeSize')]"
                     }
                 }]
             },
             "installScriptActions": [{
-                "name": "[concat('emptynode','-' ,uniquestring(variables('applicationName')))]",
-                "uri": "[concat(parameters('_artifactsLocation'), '/', parameters('installScriptActionFolder'), '/', parameters('installScriptAction'), parameters('_artifactsLocationSasToken'))]",
+                "name": "AtScale-Emptynode",
+                "uri": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-hdinsight-linux-with-edge-node/scripts/EmptyNodeSetup.sh",
                 "roles": ["edgenode"]
             }],
             "uninstallScriptActions": [],
