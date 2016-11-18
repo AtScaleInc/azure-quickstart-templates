@@ -180,7 +180,7 @@
               "minInstanceCount": 1,
               "targetInstanceCount": 3,
               "hardwareProfile": {
-                "vmSize": "Small"
+                "vmSize": "[parameters('edgeNodeSize')]"
               },
               "osProfile": {
                 "linuxOperatingSystemProfile": {
