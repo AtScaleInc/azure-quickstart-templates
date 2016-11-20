@@ -1,9 +1,9 @@
 # HDInsight (Creates Linux HDI cluster with 2 head nodes 3 ZK nodes configurable workers and 1 edge nodes, requires existing Virtual Network and storage account)
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ftrystanleftwich%2Fazure-quickstart-templates%2Fmaster%2Fas-test%2Fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ftrystanleftwich%2Fazure-quickstart-templates%2Fmaster%2Fas-cluster-existing-vmnet-storage%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
-<a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Ftrystanleftwich%2Fazure-quickstart-templates%2Fmaster%2Fas-test%2Fazuredeploy.json" target="_blank">
+<a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Ftrystanleftwich%2Fazure-quickstart-templates%2Fmaster%2Fas-cluster-existing-vmnet-storage%2Fazuredeploy.json" target="_blank">
     <img src="http://armviz.io/visualizebutton.png"/>
 </a>
 
