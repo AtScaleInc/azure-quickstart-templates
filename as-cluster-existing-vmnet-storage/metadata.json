@@ -1,0 +1,7 @@
+{
+  "itemDisplayName": "HDInsight (AtScale CurrentVirtNet and StorageAcc)",
+  "description": "HDI insight with edge node on an existing Virtual Network and existing Storage Acc",
+  "summary": "HDI for AtScale",
+  "githubUsername": "trystanleftwich",
+  "dateUpdated": "2016-11-16"
+}
