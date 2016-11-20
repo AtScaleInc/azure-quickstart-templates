@@ -8,16 +8,23 @@
         "description": "The name of the HDInsight cluster to be created. The cluster name must be globally unique."
       }
     },
+    "clusterVersion": {
+      "type": "string",
+      "defaultValue": "3.4",
+      "metadata": {
+        "description": "The HDInsight version to deploy."
+      }
+    },
     "headNodeSize": {
       "type": "string",
-      "defaultValue": "Standard_D3",
+      "defaultValue": "Standard_D5_v2",
       "metadata": {
         "description": "The VM size of the head nodes."
       }
     },
     "workerNodeSize": {
       "type": "string",
-      "defaultValue": "Standard_D3",
+      "defaultValue": "Standard_D5_v2",
       "metadata": {
         "description": "The VM size of the worker nodes."
       }
@@ -31,7 +38,7 @@
     },
     "edgeNodeSize": {
       "type": "string",
-      "defaultValue": "Standard_D3",
+      "defaultValue": "Standard_D5_v2",
       "metadata": {
         "description": "The VM size of the edge nodes."
       }
@@ -108,7 +115,7 @@
 
       },
       "properties": {
-        "clusterVersion": "3.4",
+        "clusterVersion": "[parameters('clusterVersion')]",
         "osType": "Linux",
         "clusterDefinition": {
           "kind": "hadoop",
