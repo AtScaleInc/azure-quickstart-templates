@@ -7,12 +7,8 @@
       "metadata": {
         "description": "Unique DNS name"
       }
-    },
-      "metadata": {
-        "description": "Public IP type"
-      }
     }
-  },
+   },
   "variables": {
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('loadBalancerName'))]",
     "apiVersion": "2015-06-15"
