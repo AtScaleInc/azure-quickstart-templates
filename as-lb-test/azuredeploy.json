@@ -10,13 +10,12 @@
     }
    },
   "variables": {
-    "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('loadBalancerName'))]",
     "apiVersion": "2015-06-15"
   },
   "resources": [
     {
       "apiVersion": "[variables('apiVersion')]",
-      "name": "[variables('loadBalancerName')]",
+      "name": "[parameters('loadBalancerName')]",
       "type": "Microsoft.Network/loadBalancers",
       "location": "[resourceGroup().location]",
       "properties": {
