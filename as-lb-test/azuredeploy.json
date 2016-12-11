@@ -1,0 +1,44 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "loadBalancerName": {
+      "type": "string",
+      "metadata": {
+        "description": "Unique DNS name"
+      }
+    },
+      "metadata": {
+        "description": "Public IP type"
+      }
+    }
+  },
+  "variables": {
+    "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('loadBalancerName'))]",
+    "apiVersion": "2015-06-15"
+  },
+  "resources": [
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "name": "[variables('loadBalancerName')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "inboundNatRules": [
+          {
+            "name": "test1",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "test1"
+              },
+              "protocol": "tcp",
+              "frontendPort": 10500,
+              "backendPort": 10500,
+              "enableFloatingIP": false
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
