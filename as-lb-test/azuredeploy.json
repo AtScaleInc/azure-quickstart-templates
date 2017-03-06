@@ -2,38 +2,156 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "loadBalancerName": {
+    "dnsNameforLBIP": {
       "type": "string",
       "metadata": {
         "description": "Unique DNS name"
       }
-    }
-   },
+    }    
+  },
   "variables": {
-    "apiVersion": "2015-06-15"
+    "virtualNetworkName": "tltestuseast2",
+    "publicIPAddressName": "publicIpedgenode1-95adf56a399240b383a2edc0ef062430",
+    "subnetName": "default",
+    "loadBalancerName": "edgenode1-95adf56a399240b383a2edc0ef062430",
+    "nicName": "nic-edgenode1-0-95adf56a399240b383a2edc0ef062430",
+    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
+    "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
+    "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
+    "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('loadBalancerName'))]",
+    "nicId": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]",
+    "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/LBFE')]",
+    "backEndIPConfigID": "[concat(variables('nicId'),'/ipConfigurations/ipconfig1')]",
+    "apiVersion": "2015-06-15",
+    "location": "eastus2"
   },
   "resources": [
     {
       "apiVersion": "[variables('apiVersion')]",
-      "name": "[parameters('loadBalancerName')]",
-      "type": "Microsoft.Network/loadBalancers",
-      "location": "[resourceGroup().location]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[variables('nicName')]",
+      "location": "eastus2",
       "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[concat(variables('lbID'), '/backendAddressPools/LBBE')]"
+                }
+              ],
+              "loadBalancerInboundNatRules": [
+                {
+                  "id": "[concat(variables('lbID'),'/inboundNatRules/SSH0')]"
+                  },
+                  {
+                  "id": "[concat(variables('lbID'),'/inboundNatRules/Modeler')]"
+                },
+                                {
+                  "id": "[concat(variables('lbID'),'/inboundNatRules/Engine')]"
+                  },
+                                  {
+                  "id": "[concat(variables('lbID'),'/inboundNatRules/Auth')]"
+                  },
+                                  {
+                  "id": "[concat(variables('lbID'),'/inboundNatRules/Wamp')]"
+                  }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "name": "[variables('loadBalancerName')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "location": "eastus2",
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "LBFE",
+            "properties": {
+              "publicIPAddress": {
+                "id": "[variables('publicIPAddressID')]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "LBBE"
+          }
+        ],
         "inboundNatRules": [
           {
-            "name": "test1",
+            "name": "SSH0",
             "properties": {
               "frontendIPConfiguration": {
-                "id": "test1"
+                "id": "[variables('frontEndIPConfigID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 22,
+              "backendPort": 22,
+              "enableFloatingIP": false
+            }
+          },
+            {
+            "name": "Modeler",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID')]"
               },
               "protocol": "tcp",
               "frontendPort": 10500,
               "backendPort": 10500,
               "enableFloatingIP": false
             }
-          }
-        ]
+           },
+            {
+            "name": "Engine",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 10502,
+              "backendPort": 10502,
+              "enableFloatingIP": false
+            }
+           },
+           {
+            "name": "Auth",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 10504,
+              "backendPort": 10504,
+              "enableFloatingIP": false
+            }
+            },
+            {
+            "name": "Wamp",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 10508,
+              "backendPort": 10508,
+              "enableFloatingIP": false
+            }
+            }
+           ]
+          }        
       }
-    }
-  ]
-}
+      ]
+      }
+    
